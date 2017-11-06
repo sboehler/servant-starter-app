@@ -1,7 +1,9 @@
 # servant-starter-app
 
 A fully functional app template for starting a new
-[servant](https://hackage.haskell.org/package/servant) app with [servant-auth](https://hackage.haskell.org/package/servant-auth), [postgresql-simple](https://hackage.haskell.org/package/postgresql-simple) and [postgresql-simple-migrations](https://github.com/ameingast/postgresql-simple-migration). 
+[servant](https://hackage.haskell.org/package/servant) app with cookie authentication, [postgresql-simple](https://hackage.haskell.org/package/postgresql-simple) and [postgresql-simple-migrations](https://github.com/ameingast/postgresql-simple-migration). 
+
+This version uses [servant-auth](https://hackage.haskell.org/package/servant-auth) for authentication, which is poised to become the [standard authentication framework for servant](https://github.com/haskell-servant/servant/issues/805)
 
 This is the result of my own Haskell learning experience - reviews, helpful
 suggestions & pull requests are welcome!
@@ -30,9 +32,11 @@ curl -X POST -v -H "Content-Type: application/json" -d '{"credentialsEmail":"use
 curl -X POST -b cookies -c cookies -v -H "Content-Type: application/json" -d '{"credentialsEmail":"user@example.com", "credentialsPassword":"a password"}' localhost:4000/session
 
 # access the protected user endpoint, which returns the user as a JSON object
-curl -b cookies -c cookies -v -H "Content-Type: application/json" localhost:4000/user
+# Note that servant-auth uses XSRF protection, so you need to set a header field (it only works once, as the xsrf cookie is renewed after each request
+curl -b cookies -c cookies -v -H "Content-Type: application/json" -H "X-XSRF-TOKEN: <enter xsrf token from cookies file here>" localhost:4000/user
 
-# log out
+
+# log out (doesn't work yet)
 curl -X DELETE -b cookies -c cookies -v -H "Content-Type: application/json" localhost:4000/session
 
 # verify the user endpoint is not accessible anymore
