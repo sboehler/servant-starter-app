@@ -3,7 +3,7 @@
 A fully functional app template for starting a new
 [servant](https://hackage.haskell.org/package/servant) app with [servant-auth-cookie](https://hackage.haskell.org/package/servant-auth-cookie), [postgresql-simple](https://hackage.haskell.org/package/postgresql-simple) and [postgresql-simple-migrations](https://github.com/ameingast/postgresql-simple-migration). 
 
-Check out the servant-auth branch for a version that uses [servant-auth](https://github.com/haskell-servant/servant-auth).
+Check out the [servant-auth](https://github.com/sboehler/servant-starter-app/tree/servant-auth) branch for a version that uses [servant-auth](https://github.com/haskell-servant/servant-auth).
 
 This is the result of my own Haskell learning experience - reviews, helpful
 suggestions & pull requests are welcome!
