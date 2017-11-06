@@ -8,24 +8,26 @@ import Crypto.KDF.BCrypt (hashPassword)
 import qualified Data.ByteString.Char8 as B
 import Servant
        ((:<|>)((:<|>)), (:>), Get, JSON, Post, ReqBody, ServerT, err400,
-        err404, err500, throwError)
-import Servant.Server.Experimental.Auth.Cookie (WithMetadata(..))
+        err401, err404, err500, throwError)
+import Servant.Auth.Server
+       (Auth, AuthResult(Authenticated), Cookie)
 
-import Auth (AppAuth, Session(..))
 import Database.Users (get, getByEmail, insert)
 import Model.Credentials (Credentials(..), unPassword)
 import Model.User (HashedPassword(..), User(..))
+import Resource.Session (Session(..))
 import Resource.Utils (orElseThrow)
 import Types (App, runDB)
 import Types.Entity (Entity)
 
 type GetUserR
-   = "user"
-     :> AppAuth
+   = Auth '[ Cookie] Session
+     :> "user"
      :> Get '[ JSON] (Entity User)
 
-getUser :: WithMetadata Session -> App (Entity User)
-getUser (WithMetadata (Session userId) _) = runDB (get userId) >>= orElseThrow err404
+getUser :: AuthResult Session -> App (Entity User)
+getUser (Authenticated (Session userId)) = runDB (get userId) >>= orElseThrow err404
+getUser _ = throwError err401
 
 type PostUserR
    = "user"

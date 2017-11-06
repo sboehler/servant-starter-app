@@ -42,8 +42,9 @@ library:
   - postgresql-simple
   - postgresql-simple-migration
   - resource-pool
-  - servant-auth-cookie
   - servant-server
+  - servant-auth
+  - servant-auth-server
   - transformers
   - wai
   - warp

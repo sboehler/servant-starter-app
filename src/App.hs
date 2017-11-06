@@ -2,39 +2,35 @@ module App
   ( startApp
   ) where
 
-import Auth (cookieAuthCheck, mkAuthSettings)
-import Crypto.Random (drgNew)
 import Database (initializeDatabase)
 import Network.Wai.Handler.Warp (run)
 import Resource (API, proxy, routes)
 import Servant
        (Application, Context((:.), EmptyContext), Server, enter,
         serveWithContext)
-import Servant.Server.Experimental.Auth.Cookie
-       (mkPersistentServerKey, mkRandomSource)
+import Servant.Auth.Server
+       (IsSecure(NotSecure), cookieIsSecure, def, defaultJWTSettings,
+        generateKey)
 import Types (AppContext(..), convert)
 
 startApp :: IO ()
 startApp = do
-  randomSource <- mkRandomSource drgNew 2000
-  let serverKey = mkPersistentServerKey "provide a secret key here"
+  myKey <- generateKey
   pool <- initializeDatabase
-  let authSettings = mkAuthSettings
+  -- in production, the cookie should be secure
   let context =
         AppContext
         { appContextPool = pool
         , appContextPort = 4000
-        , appContextRandomSource = randomSource
-        , appContextServerKey = serverKey
-        , appContextScheme = "http:"
-        , appContextAuthSettings = authSettings
         , appContextApproot = "localhost"
+        , appContextCookieSettings = def {cookieIsSecure = NotSecure}
+        , appContextJWTSettings = defaultJWTSettings myKey
         }
   run (appContextPort context) $ app context
 
 app :: AppContext -> Application
 app appContext@AppContext {..} =
-  let context = (cookieAuthCheck appContext :. EmptyContext)
+  let context = (appContextCookieSettings :. appContextJWTSettings :. EmptyContext)
   in serveWithContext proxy context $ server appContext
 
 server :: AppContext -> Server API

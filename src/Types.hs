@@ -10,17 +10,14 @@ import Control.Monad.Trans.Maybe (runMaybeT)
 import Data.Pool (Pool, withResource)
 import Database (Connection, Fetch)
 import Servant ((:~>), Handler, runReaderTNat)
-import Servant.Server.Experimental.Auth.Cookie
-       (AuthCookieSettings, PersistentServerKey, RandomSource)
+import Servant.Auth.Server (CookieSettings, JWTSettings)
 
 data AppContext = AppContext
   { appContextPool :: Pool Connection
-  , appContextAuthSettings :: AuthCookieSettings
-  , appContextRandomSource :: RandomSource
-  , appContextServerKey :: PersistentServerKey
   , appContextApproot :: String
   , appContextPort :: Int
-  , appContextScheme :: String
+  , appContextCookieSettings :: CookieSettings
+  , appContextJWTSettings :: JWTSettings
   }
 
 type App = ReaderT AppContext Handler
