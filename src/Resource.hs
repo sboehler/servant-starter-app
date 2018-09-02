@@ -1,3 +1,4 @@
+{-# LANGUAGE TypeOperators #-}
 module Resource
   ( API
   , proxy

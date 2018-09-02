@@ -1,3 +1,7 @@
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE DeriveGeneric #-}
 module Resource.Session where
 
 import Control.Monad.Trans (liftIO)

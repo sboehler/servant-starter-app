@@ -1,3 +1,7 @@
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE TypeFamilies #-}
 module Types
   ( App
   , AppContext(..)
@@ -9,7 +13,8 @@ import Control.Monad.Reader (ReaderT, asks, liftIO, runReaderT)
 import Control.Monad.Trans.Maybe (runMaybeT)
 import Data.Pool (Pool, withResource)
 import Database (Connection, Fetch)
-import Servant ((:~>), Handler, runReaderTNat)
+import Servant (Handler)
+import Servant.Server (hoistServer)
 import Servant.Auth.Server (CookieSettings, JWTSettings)
 
 data AppContext = AppContext
@@ -22,8 +27,9 @@ data AppContext = AppContext
 
 type App = ReaderT AppContext Handler
 
-convert :: AppContext -> (App :~> Handler)
-convert = runReaderTNat
+--convert :: AppContext -> (App :~> Handler)
+--convert = hoistServer
+convert = undefined
 
 runDB :: forall a. Fetch a -> App (Maybe a)
 runDB op = do

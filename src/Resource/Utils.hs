@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleContexts #-}
 module Resource.Utils
   ( orElseThrow
   ) where

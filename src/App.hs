@@ -1,3 +1,4 @@
+{-# LANGUAGE RecordWildCards #-}
 module App
   ( startApp
   ) where
@@ -6,7 +7,7 @@ import Database (initializeDatabase)
 import Network.Wai.Handler.Warp (run)
 import Resource (API, proxy, routes)
 import Servant
-       (Application, Context((:.), EmptyContext), Server, enter,
+       (Application, Context((:.), EmptyContext), Server,
         serveWithContext)
 import Servant.Auth.Server
        (IsSecure(NotSecure), cookieIsSecure, def, defaultJWTSettings,
@@ -34,4 +35,4 @@ app appContext@AppContext {..} =
   in serveWithContext proxy context $ server appContext
 
 server :: AppContext -> Server API
-server context = enter (convert context) routes
+server context = (convert context) routes
