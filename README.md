@@ -1,11 +1,11 @@
 # servant-starter-app
 
 A fully functional app template for starting a new
-[servant](https://hackage.haskell.org/package/servant) app with cookie authentication, [postgresql-simple](https://hackage.haskell.org/package/postgresql-simple) and [postgresql-simple-migrations](https://github.com/ameingast/postgresql-simple-migration). 
+[servant](https://hackage.haskell.org/package/servant) app with cookie authentication, [postgresql-simple](https://hackage.haskell.org/package/postgresql-simple) and [postgresql-simple-migrations](https://github.com/ameingast/postgresql-simple-migration).
 
 This version uses [servant-auth](https://hackage.haskell.org/package/servant-auth) for authentication, which is poised to become the [standard authentication framework for servant](https://github.com/haskell-servant/servant/issues/805)
 
-Check out the [servant-auth](https://github.com/sboehler/servant-starter-app/tree/servant-auth) branch for a version that uses [servant-auth](https://github.com/haskell-servant/servant-auth).
+Check out the [servant-auth-cookie](https://github.com/sboehler/servant-starter-app/tree/servant-auth-cookie) branch for a version that uses [servant-auth-cookie](https://github.com/zohl/servant-auth-cookie).
 
 This is the result of my own Haskell learning experience - reviews, helpful
 suggestions & pull requests are welcome!
@@ -17,11 +17,18 @@ and have a PostgreSQL database named 'servant-starter-app' running on port
 5432, without authentication (see src/Database.hs if you require  additional
 configuration).
 
-Starting the server:
+Starting the server using stack:
 
 ```bash
 stack setup
-stack run 
+stack run
+```
+
+Starting the server using nix:
+
+``` bash
+nix-shell
+cabal new-run
 ```
 
 Testing the API:
