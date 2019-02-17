@@ -12,7 +12,6 @@ import Servant
         throwError)
 import Servant.Auth.Server
        (FromJWT, SetCookie, SetCookie, ToJWT, acceptLogin)
-import Servant.Auth.Server.SetCookieOrphan ()
 import Types.Entity (Entity(..))
 
 import Database.Users (getByEmail)

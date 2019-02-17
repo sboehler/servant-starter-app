@@ -1,37 +1,57 @@
 module App
   ( startApp
-  ) where
+  )
+where
 
-import Database (initializeDatabase)
-import Network.Wai.Handler.Warp (run)
-import Resource (API, proxy, routes)
-import Servant
-       (Application, Context((:.), EmptyContext), Server, enter,
-        serveWithContext)
-import Servant.Auth.Server
-       (IsSecure(NotSecure), cookieIsSecure, def, defaultJWTSettings,
-        generateKey)
-import Types (AppContext(..), convert)
+import           Database                       ( initializeDatabase )
+import           Network.Wai.Handler.Warp       ( run )
+import           Resource                       ( API
+                                                , proxy
+                                                , routes
+                                                )
+import           Servant                        ( Application
+                                                , Context((:.), EmptyContext)
+                                                , Server
+                                                , hoistServer
+                                                , hoistServerWithContext
+                                                , Proxy(Proxy)
+                                                , serveWithContext
+                                                )
+import           Servant.Auth.Server            ( IsSecure(NotSecure)
+                                                , cookieIsSecure
+                                                , def
+                                                , defaultJWTSettings
+                                                , generateKey
+                                                , CookieSettings
+                                                , JWTSettings
+                                                )
+import           Types                          ( AppContext(..)
+                                                , convert
+                                                )
 
 startApp :: IO ()
 startApp = do
   myKey <- generateKey
-  pool <- initializeDatabase
+  pool  <- initializeDatabase
   -- in production, the cookie should be secure
-  let context =
-        AppContext
-        { appContextPool = pool
-        , appContextPort = 4000
-        , appContextApproot = "localhost"
-        , appContextCookieSettings = def {cookieIsSecure = NotSecure}
-        , appContextJWTSettings = defaultJWTSettings myKey
+  let context = AppContext
+        { appContextPool           = pool
+        , appContextPort           = 4000
+        , appContextApproot        = "localhost"
+        , appContextCookieSettings = def { cookieIsSecure = NotSecure }
+        , appContextJWTSettings    = defaultJWTSettings myKey
         }
-  run (appContextPort context) $ app context
+  run (appContextPort context) $ createApp context
 
-app :: AppContext -> Application
-app appContext@AppContext {..} =
-  let context = (appContextCookieSettings :. appContextJWTSettings :. EmptyContext)
-  in serveWithContext proxy context $ server appContext
+createApp :: AppContext -> Application
+createApp appContext@AppContext {..} =
+  let context =
+          (appContextCookieSettings :. appContextJWTSettings :. EmptyContext)
+  in  serveWithContext proxy context $ createServer appContext
 
-server :: AppContext -> Server API
-server context = enter (convert context) routes
+createServer :: AppContext -> Server API
+createServer appContext =
+  hoistServerWithContext proxy context (convert appContext) routes
+
+context :: Proxy '[CookieSettings, JWTSettings]
+context = Proxy
