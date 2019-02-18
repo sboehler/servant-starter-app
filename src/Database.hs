@@ -12,11 +12,20 @@ import Control.Monad.Trans.Reader (ReaderT, ask)
 import Data.ByteString.Char8 as BS8 (pack)
 import Data.Pool (Pool, createPool, withResource)
 import Database.PostgreSQL.Simple
-       (Connection, FromRow, Query, close, connectPostgreSQL, query,
-        query_, withTransaction)
+  ( Connection
+  , FromRow
+  , Query
+  , close
+  , connectPostgreSQL
+  , query
+  , query_
+  , withTransaction
+  )
 import Database.PostgreSQL.Simple.Migration
-       (MigrationCommand(MigrationDirectory, MigrationInitialization),
-        MigrationContext(MigrationContext), runMigration)
+  ( MigrationCommand(MigrationDirectory, MigrationInitialization)
+  , MigrationContext(MigrationContext)
+  , runMigration
+  )
 import Database.PostgreSQL.Simple.ToRow (ToRow)
 
 getDbConnection :: IO Connection

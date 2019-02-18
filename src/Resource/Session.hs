@@ -7,11 +7,21 @@ import Data.Aeson (FromJSON, ToJSON)
 import qualified Data.ByteString.Char8 as B
 import GHC.Generics (Generic)
 import Servant
-       ((:<|>)(..), (:>), DeleteNoContent, Header, Headers, JSON,
-        NoContent(..), PostNoContent, ReqBody, ServerT, err401, noHeader,
-        throwError)
-import Servant.Auth.Server
-       (FromJWT, SetCookie, SetCookie, ToJWT, acceptLogin)
+  ( (:<|>)(..)
+  , (:>)
+  , DeleteNoContent
+  , Header
+  , Headers
+  , JSON
+  , NoContent(..)
+  , PostNoContent
+  , ReqBody
+  , ServerT
+  , err401
+  , noHeader
+  , throwError
+  )
+import Servant.Auth.Server (FromJWT, SetCookie, SetCookie, ToJWT, acceptLogin)
 import Types.Entity (Entity(..))
 
 import Database.Users (getByEmail)
@@ -36,7 +46,9 @@ type PostSessionR
      :> ReqBody '[ JSON] Credentials
      :> PostNoContent '[ JSON] (Headers '[ Header "Set-Cookie" SetCookie, Header "Set-Cookie" SetCookie] NoContent)
 
-postSession :: Credentials -> T.App (Headers '[ Header "Set-Cookie" SetCookie, Header "Set-Cookie" SetCookie] NoContent)
+postSession ::
+     Credentials
+  -> T.App (Headers '[ Header "Set-Cookie" SetCookie, Header "Set-Cookie" SetCookie] NoContent)
 postSession Credentials {..} = do
   user <- T.runDB $ getByEmail credentialsEmail
   T.AppContext {..} <- ask
@@ -44,20 +56,22 @@ postSession Credentials {..} = do
     Just (Entity userId User {..}) ->
       let hash = unHashedPassword userHashedPassword
           valid = validatePassword (B.pack $ unPassword credentialsPassword) (B.pack hash)
-      in if valid
-           then do
-             mApplyCookies <- liftIO $ acceptLogin appContextCookieSettings appContextJWTSettings (Session userId)
-             case mApplyCookies of
-               Nothing -> throwError err401
-               Just applyCookies -> return $ applyCookies NoContent
-           else throwError err401
+       in if valid
+            then do
+              mApplyCookies <-
+                liftIO $ acceptLogin appContextCookieSettings appContextJWTSettings (Session userId)
+              case mApplyCookies of
+                Nothing -> throwError err401
+                Just applyCookies -> return $ applyCookies NoContent
+            else throwError err401
     _ -> throwError err401
 
 type DeleteSessionR
    = "session"
      :> DeleteNoContent '[ JSON] (Headers '[ Header "Set-Cookie" SetCookie, Header "Set-Cookie" SetCookie] NoContent)
 
-deleteSession :: T.App (Headers '[ Header "Set-Cookie" SetCookie, Header "Set-Cookie" SetCookie] NoContent)
+deleteSession ::
+     T.App (Headers '[ Header "Set-Cookie" SetCookie, Header "Set-Cookie" SetCookie] NoContent)
 deleteSession = noHeader . noHeader <$> return NoContent
 
 type SessionAPI

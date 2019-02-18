@@ -22,7 +22,7 @@ data AppContext = AppContext
 
 type App = ReaderT AppContext Handler
 
-convert :: AppContext -> App a-> Handler a
+convert :: AppContext -> App a -> Handler a
 convert context app = runReaderT app context
 
 runDB :: forall a. Fetch a -> App (Maybe a)

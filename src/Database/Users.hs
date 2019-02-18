@@ -22,5 +22,8 @@ getByEmail email = do
 
 insert :: User -> Fetch (Entity User)
 insert User {..} = do
-  [x] <- runQuery "insert into users (email, hashed_password) values (?, ?) returning *" (userEmail, userHashedPassword)
+  [x] <-
+    runQuery
+      "insert into users (email, hashed_password) values (?, ?) returning *"
+      (userEmail, userHashedPassword)
   return x

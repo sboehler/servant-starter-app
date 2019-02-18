@@ -7,10 +7,20 @@ import Control.Monad.IO.Class (liftIO)
 import Crypto.KDF.BCrypt (hashPassword)
 import qualified Data.ByteString.Char8 as B
 import Servant
-       ((:<|>)((:<|>)), (:>), Get, JSON, Post, ReqBody, ServerT, err400,
-        err401, err404, err500, throwError)
-import Servant.Auth.Server
-       (Auth, AuthResult(Authenticated), Cookie)
+  ( (:<|>)((:<|>))
+  , (:>)
+  , Get
+  , JSON
+  , Post
+  , ReqBody
+  , ServerT
+  , err400
+  , err401
+  , err404
+  , err500
+  , throwError
+  )
+import Servant.Auth.Server (Auth, AuthResult(Authenticated), Cookie)
 
 import Database.Users (get, getByEmail, insert)
 import Model.Credentials (Credentials(..), unPassword)
